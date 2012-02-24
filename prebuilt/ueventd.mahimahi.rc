@@ -1,0 +1,5 @@
+#misc partition
+mtd@misc                  0460   radio     diag
+
+# the genlock client device node is world writable/readable.
+#/dev/genlock              0666   root      root
