@@ -26,42 +26,20 @@ PRODUCT_PROPERTY_OVERRIDES := \
     wifi.interface=eth0 \
     wifi.supplicant_scan_interval=180 \
     ro.media.dec.jpeg.memcap=20000000 \
-    ro.opengles.version=131072 \
-    dalvik.vm.heapsize=64m
+    ro.opengles.version=131072
 
-# Ril properties
+# Dalvik properties - read from AndroidRuntime
+# dexop-flags:
+# "v="  verification 'n': none, 'r': remote, 'a': all
+# "o="  optimization 'n': none, 'v': verified, 'a': all, 'f': full
+# "m=y" register map
 PRODUCT_PROPERTY_OVERRIDES += \
-    rild.libpath=/system/lib/libhtc_ril.so \
-    ro.ril.enable.managed.roaming=1 \
-    ro.ril.oem.nosim.ecclist=911,112,999,000,08,118,120,122,110,119,995 \
-    ro.ril.emc.mode=2 \
-    ro.ril.hsxpa=2 \
-    ro.ril.gprsclass=10
+    dalvik.vm.dexopt-flags=v=n,o=v,m=y \
+    dalvik.vm.checkjni=false \
+    dalvik.vm.dexopt-data-only=1
 
-#    ro.ril.hsdpa.category=8 \
-#    ro.ril.hsupa.category=5 \
-#    ro.ril.gprsclass=12
-
-# Default network type.
-# 0 => /* GSM/WCDMA (WCDMA preferred) */
-# 3 => /* GSM/WCDMA (auto mode, according to PRL) */
-PRODUCT_PROPERTY_OVERRIDES += ro.telephony.default_network=3
-
-# we have enough storage space to hold precise GC data
-PRODUCT_TAGS += dalvik.gc.type-precise
-
-# Ril workaround
-ADDITIONAL_BUILD_PROPERTIES += ro.telephony.ril.v3=signalstrength
-    #,skipbrokendatacall,facilitylock,datacall,icccardstatus
-
-# Disable HWAccel for now
-ADDITIONAL_BUILD_PROPERTIES += ro.config.disable_hw_accel=true
-
-# Set usb type
-ADDITIONAL_DEFAULT_PROPERTIES += \
-    persist.sys.usb.config=mass_storage \
-    persist.service.adb.enable=1 \
-    usb_wakeup=enable
+#ota system updated version
+ADDITIONAL_BUILD_PROPERTIES += ro.build.branch=HWA
 
 # Performance Tweaks
 PRODUCT_PROPERTY_OVERRIDES += \
@@ -70,33 +48,72 @@ PRODUCT_PROPERTY_OVERRIDES += \
     windowsmgr.max_events_per_sec=150 \
     ro.telephony.call_ring.delay=0 \
     ro.lge.proximity.delay=10 \
-    mot.proximity.delay=10 \
-    Debug.performance.tuning=1 \
-    Video.accelerate.hw=1 \
-    ro.HOME_APP_ADJ=1 \
-    ro.PERCEPTIBLE_APP_ADJ=0 \
-    debug.sf.hw=1 \
-    ro.kernel.android.checkjni=0 \
-    dalvik.vm.dexopt-data-only=1 \
-    dalvik.vm.verify-bytecode=false \
-    dalvik.vm.dexopt-flags=v=n,o=v \
-    persist.sys.use_dithering=0 \
-    net.tcp.buffersize.default=4096,87380,256960,4096,16384,256960 \
-    net.tcp.buffersize.wifi=4096,87380,256960,4096,16384,256960 \
-    net.tcp.buffersize.umts=4096,87380,256960,4096,16384,256960 \
-    net.tcp.buffersize.gprs=4096,87380,256960,4096,16384,256960 \
-    net.tcp.buffersize.edge=4096,87380,256960,4096,16384,256960
+    mot.proximity.delay=10
+
+## Compcache
+#PRODUCT_PROPERTY_OVERRIDES += \
+#    persist.service.zram=1 \
+#    ro.zram.default=18
+
+# Default heap settings for 512mb device
+include frameworks/base/build/phone-hdpi-512-dalvik-heap.mk
+
+# we have enough storage space to hold precise GC data
+PRODUCT_TAGS += dalvik.gc.type-precise
+
+# Ril properties
+# default_network:
+# 0 => GSM/WCDMA (WCDMA preferred), 3 => GSM/WCDMA (auto mode, according to PRL)
+# ril.v3: Also available: skipbrokendatacall,facilitylock,datacall,icccardstatus
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.ril.enable.managed.roaming=1 \
+    ro.ril.oem.nosim.ecclist=911,112,999,000,08,118,120,122,110,119,995 \
+    ro.ril.emc.mode=2 \
+    ro.ril.hsxpa=2 \
+    ro.ril.gprsclass=10 \
+    ro.ril.disable.power.collapse=false \
+    rild.libpath=/system/lib/libhtc_ril.so \
+    ro.telephony.call_ring.delay=2 \
+    ro.telephony.ril.v3=signalstrength \
+    ro.telephony.default_network=0
+
+# Don't set /proc/sys/vm/dirty_ratio to 0 when USB mounting
+PRODUCT_PROPERTY_OVERRIDES += ro.vold.umsdirtyratio=20
+
+# Enable gpu composition: 0 => cpu composition, 1 => gpu composition
+# Note: must be 1 for debug.composition.type to work
+PRODUCT_PROPERTY_OVERRIDES += debug.sf.hw=1
+
+# Enable copybit composition
+PRODUCT_PROPERTY_OVERRIDES += debug.composition.type=mdp
+
+# Force 2 buffers - gralloc defaults to 3 and we only have 2
+PRODUCT_PROPERTY_OVERRIDES += debug.gr.numframebuffers=2
+
+# HardwareRenderer properties
+# dirty_regions: "false" to disable partial invalidates, override if enabletr=true
+PRODUCT_PROPERTY_OVERRIDES += \
+    hwui.render_dirty_regions=false \
+    hwui.disable_vsync=true \
+    hwui.print_config=choice \
+    debug.enabletr=false
+
+# Set usb type
+ADDITIONAL_DEFAULT_PROPERTIES := \
+    persist.sys.usb.config=mass_storage \
+    persist.service.adb.enable=1
 
 #
 # Packages needed for Passion
 #
-# Sensors and stuff
+# Sensors
 PRODUCT_PACKAGES := \
     com.android.future.usb.accessory \
     gps.mahimahi \
     lights.mahimahi \
     sensors.mahimahi \
-    librs_jni
+    librs_jni \
+    camera.qsd8k
 # Audio
 PRODUCT_PACKAGES += \
     audio.a2dp.default \
@@ -106,12 +123,12 @@ PRODUCT_PACKAGES += \
 PRODUCT_PACKAGES += \
     copybit.qsd8k \
     gralloc.qsd8k \
-    hwcomposer.default
-#    hwcomposer.qsd8k \
-#    libgenlock \
-#    libmemalloc \
-#    libtilerenderer \
-#    libQcomUI
+    hwcomposer.default \
+    hwcomposer.qsd8k \
+    libgenlock \
+    libmemalloc \
+    libtilerenderer \
+    libQcomUI
 # Omx
 PRODUCT_PACKAGES += \
     libOmxCore \
@@ -133,39 +150,20 @@ PRODUCT_COPY_FILES := \
     device/htc/passion/prebuilt/h2w_headset.kl:system/usr/keylayout/h2w_headset.kl \
     device/htc/passion/prebuilt/mahimahi-nav.idc:system/usr/idc/mahimahi-nav.idc \
     device/htc/passion/prebuilt/synaptics-rmi-touchscreen.idc:system/usr/idc/synaptics-rmi-touchscreen.idc \
-    device/htc/passion/prebuilt/vold.fstab:system/etc/vold.fstab
+    device/htc/passion/prebuilt/vold.fstab:system/etc/vold.fstab \
+    device/htc/passion/prebuilt/sysctl.conf:system/etc/sysctl.conf
 
 # Prebuilt Modules
 PRODUCT_COPY_FILES += \
     device/htc/passion/prebuilt/bcm4329.ko:system/lib/modules/bcm4329.ko
 
 # Prebuilt Kernel
-PRODUCT_COPY_FILES += \
-    device/htc/passion/prebuilt/kernel:kernel
-
-# prebuilt camera modules
-PRODUCT_COPY_FILES += \
-    device/htc/passion/prebuilt/camera.qsd8k.so:system/lib/hw/camera.qsd8k.so \
-    device/htc/passion/prebuilt/liboemcamera.so:system/lib/liboemcamera.so \
-    device/htc/passion/prebuilt/libcamera.so:system/lib/libcamera.so
-
-PRODUCT_COPY_FILES += \
-    device/htc/passion/prebuilt/libOmxCore.so:system/lib/libOmxCore.so \
-    device/htc/passion/prebuilt/libOmxVdec.so:system/lib/libOmxVdec.so \
-    device/htc/passion/prebuilt/libOmxVidEnc.so:system/lib/libOmxVidEnc.so \
-    device/htc/passion/prebuilt/libmediaplayerservice.so:system/lib/libmediaplayerservice.so \
-    device/htc/passion/prebuilt/libstagefrighthw.so:system/lib/libstagefrighthw.so
-
-# other stuff
-PRODUCT_COPY_FILES += \
-    device/htc/passion/prebuilt/libgui.so:system/lib/libgui.so \
-    device/htc/passion/prebuilt/libjni_mosaic.so:system/lib/libjni_mosaic.so
-
-# a2sd
-PRODUCT_COPY_FILES += \
-    device/htc/passion/prebuilt/a2sd:system/bin/a2sd \
-    device/htc/passion/prebuilt/05mountext:system/etc/init.d/05mountext \
-    device/htc/passion/prebuilt/10apps2sd:system/etc/init.d/10apps2sd
+ifeq ($(TARGET_PREBUILT_KERNEL),)
+LOCAL_KERNEL := device/htc/passion/prebuilt/kernel
+else
+LOCAL_KERNEL := $(TARGET_PREBUILT_KERNEL)
+endif
+PRODUCT_COPY_FILES += $(LOCAL_KERNEL):kernel
 
 # Permissions
 PRODUCT_COPY_FILES += \
@@ -187,21 +185,36 @@ PRODUCT_COPY_FILES += \
 PRODUCT_COPY_FILES += \
     device/htc/passion/prebuilt/media_profiles.xml:system/etc/media_profiles.xml
 
-PRODUCT_PACKGES+= \
-    bash \
-    e2fsck \
-    tune2fs \
-    libext2fs \
-    libext2_uuid \
-    libext2_e2p \
-    libext2_blkid \
-    libext2_com_err \
-    libext2_profile \
-    resize2fs \
-    mke2fs \
-    badblocks \
-    scp \
-    ssh
+# a2sd
+PRODUCT_COPY_FILES += \
+    device/htc/passion/prebuilt/a2sd:system/bin/a2sd \
+    device/htc/passion/prebuilt/05mountext:system/etc/init.d/05mountext \
+    device/htc/passion/prebuilt/10apps2sd:system/etc/init.d/10apps2sd
+
+PRODUCT_NAME := passion
+PRODUCT_BRAND := google
+PRODUCT_DEVICE := passion
+PRODUCT_MODEL := Nexus One
+PRODUCT_MANUFACTURER := HTC
+PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=passion BUILD_ID=GRK39F \
+BUILD_FINGERPRINT=google/passion/passion:2.3.6/GRK39F/189904:user/release-keys \
+PRIVATE_BUILD_DESC="passion-user 2.3.6 GRK39F 189904 release-keys"
+
+
+PRODUCT_CODENAME := passion
+BUILD_VERSION := 3.0.0
+PRODUCT_PROPERTY_OVERRIDES += \
+    ro.build.romversion=MiniCM9-$(BUILD_VERSION)-$(PRODUCT_CODENAME)
+
+PRODUCT_PACKAGES += \
+    Stk \
+    Camera
+
+PRODUCT_RELEASE_NAME := N1
+PRODUCT_VERSION_DEVICE_SPECIFIC := -$(shell date +%m%d%Y)
+
+# Get some Gapps
+$(call inherit-product-if-exists, gapps/gapps.mk)
 
 # Proprietary makefile
 $(call inherit-product-if-exists, vendor/htc/passion/passion-vendor.mk)

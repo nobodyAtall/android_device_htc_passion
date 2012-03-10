@@ -33,6 +33,9 @@
          strictly needed. -->
     <bool name="config_sf_limitedAlpha">true</bool>
 
+    <!-- passion doesn't handle this blur effect very quickly. -->
+    <bool name="config_sf_slowBlur">true</bool>
+
     <!-- Array of light sensor LUX values to define our levels for auto backlight brightness support.
          The N entries of this array define N + 1 zones as follows:
 
@@ -83,21 +86,19 @@
         <item>0</item>
         <item>0</item>
     </integer-array>
-    
-    <!-- Component name of the default wallpaper. This will be ImageWallpaper if not 
+
+    <!-- Component name of the default wallpaper. This will be ImageWallpaper if not
          specified -->
-<!--
     <string name="default_wallpaper_component">com.android.wallpaper/.nexus.NexusWallpaper</string>
--->
 
     <integer name="config_deskDockKeepsScreenOn">0</integer>
     <integer name="config_carDockKeepsScreenOn">1</integer>
 
-    <!-- Default color for notification LED is cyan -->
+    <!-- Default color for notification LED is white (new color is cyan) -->
     <color name="config_defaultNotificationColor">#0099FF</color>
 
     <!-- Default blink frequency for notification LED is 9 seconds. -->
-    <integer name="config_defaultNotificationLedOff">2000</integer>
+    <integer name="config_defaultNotificationLedOff">6000</integer>
 
     <!-- Component name of the service providing network location support. -->
     <string name="config_networkLocationProvider">com.google.android.location.NetworkLocationProvider</string>
@@ -160,16 +161,14 @@
 
     <!-- If this is true, the screen will come on when you unplug usb/power/whatever. -->
     <bool name="config_unplugTurnsOnScreen">true</bool>
-    
+
     <!-- Whether a software navigation bar should be shown. NOTE: in the future this may be
          autodetected from the Configuration. -->
     <bool name="config_showNavigationBar">false</bool>
 
-    <bool name="config_animateScreenLights">false</bool>
-    
     <!-- Minimum screen brightness allowed by the power manager. -->
-    <integer name="config_screenBrightnessDim">8</integer>
-    
+    <integer name="config_screenBrightnessDim">10</integer>
+
     <!-- Boolean indicating whether the wifi chipset has dual frequency band support -->
     <bool translatable="false" name="config_wifi_dual_band_support">false</bool>
 
@@ -177,16 +176,12 @@
     <bool translatable="false" name="config_wifi_background_scan_support">true</bool>
 
     <!-- Boolean indicating whether the wifi chipset has p2p support -->
-    <bool translatable="false" name="config_wifi_p2p_support">true</bool><!--Does it? I dont know-->
+    <bool translatable="false" name="config_wifi_p2p_support">true</bool>
 
     <bool name="config_ui_enableFadingMarquee">false</bool>
-    
+
     <!-- Is the notification LED intrusive? Used to decide if there should be a disable option -->
     <bool name="config_intrusiveNotificationLed">true</bool>
-
-    <!-- Boolean indicating if restoring network selection should be skipped -->
-    <!-- The restoring is handled by modem if it is true -->
-    <bool translatable="false" name="skip_restoring_network_selection">false</bool>
 
     <!-- Vibrator pattern for feedback about booting with safe mode disabled -->
     <integer-array name="config_safeModeDisabledVibePattern">
@@ -200,7 +195,7 @@
          This feature should be disabled for most devices. -->
     <integer name="config_virtualKeyQuietTimeMillis">250</integer>
 
-<!-- Max space (in MB) allocated to DownloadManager to store the downloaded
+    <!-- Max space (in MB) allocated to DownloadManager to store the downloaded
          files if they are to be stored in DownloadManager's data dir,
          which typically is /data/data/com.android.providers.downloads/files -->
     <integer name="config_downloadDataDirSize">50</integer>
@@ -213,5 +208,8 @@
          starts removing files to try to make percentage of available
          free space above this threshold value. -->
     <integer name="config_downloadDataDirLowSpaceThreshold">10</integer>
+
+    <!-- If this is true, the screen will fade off. -->
+    <bool name="config_animateScreenLights">false</bool>
 
 </resources>
