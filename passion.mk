@@ -23,7 +23,7 @@ PRODUCT_LOCALES := en
 # General propreties
 PRODUCT_PROPERTY_OVERRIDES := \
     ro.sf.lcd_density=240 \
-    wifi.interface=eth0 \
+    wifi.interface=wlan0 \
     wifi.supplicant_scan_interval=180 \
     ro.media.dec.jpeg.memcap=20000000 \
     ro.opengles.version=131072
@@ -34,9 +34,15 @@ PRODUCT_PROPERTY_OVERRIDES := \
 # "o="  optimization 'n': none, 'v': verified, 'a': all, 'f': full
 # "m=y" register map
 PRODUCT_PROPERTY_OVERRIDES += \
-    dalvik.vm.dexopt-flags=v=n,o=v,m=y \
+    dalvik.vm.dexopt-flags=m=y \
     dalvik.vm.checkjni=false \
     dalvik.vm.dexopt-data-only=1
+
+# Default heap settings for 512mb device
+include frameworks/base/build/phone-hdpi-512-dalvik-heap.mk
+
+# we have enough storage space to hold precise GC data
+PRODUCT_TAGS += dalvik.gc.type-precise
 
 #ota system updated version
 ADDITIONAL_BUILD_PROPERTIES += ro.build.branch=HWA
@@ -50,16 +56,10 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.lge.proximity.delay=10 \
     mot.proximity.delay=10
 
-## Compcache
-#PRODUCT_PROPERTY_OVERRIDES += \
-#    persist.service.zram=1 \
-#    ro.zram.default=18
-
-# Default heap settings for 512mb device
-include frameworks/base/build/phone-hdpi-512-dalvik-heap.mk
-
-# we have enough storage space to hold precise GC data
-PRODUCT_TAGS += dalvik.gc.type-precise
+# Compcache
+PRODUCT_PROPERTY_OVERRIDES += \
+    persist.service.zram=1 \
+    ro.zram.default=10
 
 # Ril properties
 # default_network:
@@ -74,7 +74,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.ril.disable.power.collapse=false \
     rild.libpath=/system/lib/libhtc_ril.so \
     ro.telephony.call_ring.delay=2 \
-    ro.telephony.ril.v3=signalstrength \
+    ro.telephony.ril.v3=signalstrength,singlepdp \
     ro.telephony.default_network=0
 
 # Don't set /proc/sys/vm/dirty_ratio to 0 when USB mounting
@@ -121,7 +121,6 @@ PRODUCT_PACKAGES += \
     audio_policy.qsd8k
 # GPU
 PRODUCT_PACKAGES += \
-    copybit.qsd8k \
     gralloc.qsd8k \
     hwcomposer.default \
     hwcomposer.qsd8k \
@@ -129,6 +128,7 @@ PRODUCT_PACKAGES += \
     libmemalloc \
     libtilerenderer \
     libQcomUI
+    #copybit.qsd8k
 # Omx
 PRODUCT_PACKAGES += \
     libOmxCore \
@@ -200,11 +200,7 @@ PRODUCT_BUILD_PROP_OVERRIDES += PRODUCT_NAME=passion BUILD_ID=GRK39F \
 BUILD_FINGERPRINT=google/passion/passion:2.3.6/GRK39F/189904:user/release-keys \
 PRIVATE_BUILD_DESC="passion-user 2.3.6 GRK39F 189904 release-keys"
 
-
 PRODUCT_CODENAME := passion
-BUILD_VERSION := 3.0.0
-PRODUCT_PROPERTY_OVERRIDES += \
-    ro.build.romversion=MiniCM9-$(BUILD_VERSION)-$(PRODUCT_CODENAME)
 
 PRODUCT_PACKAGES += \
     Stk \
@@ -214,7 +210,7 @@ PRODUCT_RELEASE_NAME := N1
 PRODUCT_VERSION_DEVICE_SPECIFIC := -$(shell date +%m%d%Y)
 
 # Get some Gapps
-$(call inherit-product-if-exists, gapps/gapps.mk)
+#$(call inherit-product-if-exists, gapps/gapps.mk)
 
 # Proprietary makefile
 $(call inherit-product-if-exists, vendor/htc/passion/passion-vendor.mk)

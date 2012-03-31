@@ -65,6 +65,9 @@ touch.size.calibration = normalized
     # Orientation
 touch.orientation.calibration = none
 
+    # JumpyTouchFilter
+touch.filterTouchEvents = 1
+
     # Keyboard
 keyboard.layout = mahimahi-keypad
 keyboard.characterMap = Virtual

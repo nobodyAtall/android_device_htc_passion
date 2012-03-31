@@ -39,6 +39,10 @@ TARGET_CPU_ABI2 := armeabi
 
 # Neon stuff
 TARGET_ARCH_VARIANT := armv7-a-neon
+TARGET_ARCH_VARIANT_CPU := cortex-a8
+TARGET_ARCH_VARIANT_FPU := neon
+ARCH_ARM_HAVE_TLS_REGISTER := true
+ARCH_ARM_HAVE_VFP := true
 ARCH_ARM_HAVE_TLS_REGISTER := true
 
 # FPU compilation flags
@@ -55,10 +59,12 @@ BOARD_WLAN_DEVICE           := bcm4329
 WIFI_DRIVER_MODULE_PATH     := "/system/lib/modules/bcm4329.ko"
 WIFI_DRIVER_FW_PATH_STA     := "/vendor/firmware/fw_bcm4329.bin"
 WIFI_DRIVER_FW_PATH_AP      := "/vendor/firmware/fw_bcm4329_apsta.bin"
-WIFI_DRIVER_MODULE_ARG      := "firmware_path=/vendor/firmware/fw_bcm4329.bin nvram_path=/proc/calibration"
+WIFI_DRIVER_MODULE_ARG      := "iface_name=wlan firmware_path=/system/vendor/firmware/fw_bcm4329.bin nvram_path=/proc/calibration"
 WIFI_DRIVER_MODULE_NAME     := "bcm4329"
 
 BOARD_USES_GENERIC_AUDIO := false
+# prevent breakage from QCOM_HARDWARE in system/audio.h
+COMMON_GLOBAL_CFLAGS += -DLEGACY_AUDIO_COMPAT
 
 # Kernel
 BOARD_KERNEL_CMDLINE    := no_console_suspend=1 wire.search_count=5
@@ -91,22 +97,14 @@ TARGET_USE_OVERLAY      := false
 TARGET_HAVE_BYPASS      := false
 TARGET_USES_C2D_COMPOSITION := false
 
-# Try to use ASHMEM if possible (when non-MDP composition is used)
+# Allow fallback to ashmem. Try to use ASHMEM if possible (when non-MDP composition is used)
 # if enabled, set debug.sf.hw=1 in system.prop
-#TARGET_GRALLOC_USES_ASHMEM := true
+TARGET_GRALLOC_USES_ASHMEM := true
 
 # Debuging egl
 COMMON_GLOBAL_CFLAGS += -DEGL_TRACE
 
-# Find out what these do..if anything
-# used in cafs tree nothing actually present is ours (yet)
-#HAVE_ADRENO200_SOURCE := true
-#HAVE_ADRENO200_SC_SOURCE := true
-#HAVE_ADRENO200_FIRMWARE := true
-#BOARD_USES_QCNE := true
-# I dont think these do anything but everyone else is using them
 #BOARD_USE_QCOM_PMEM := true
-#BOARD_USES_ADRENO_200 := true
 #TARGET_HARDWARE_3D := false
 
 # Qcom
