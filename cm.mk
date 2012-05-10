@@ -50,4 +50,4 @@ PRODUCT_PACKAGES += \
 PRODUCT_COPY_FILES += device/htc/passion/extras/nexus-bootanimation.zip:system/media/bootanimation.zip
 
 # Get some Gapps
-$(call inherit-product-if-exists, gapps/gapps.mk)
+#$(call inherit-product-if-exists, gapps/gapps.mk)

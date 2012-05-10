@@ -71,7 +71,7 @@ PRODUCT_PROPERTY_OVERRIDES += \
     ro.ril.emc.mode=2 \
     ro.ril.hsxpa=2 \
     ro.ril.gprsclass=10 \
-    ro.ril.disable.power.collapse=false \
+    ro.ril.disable.power.collapse=0 \
     rild.libpath=/system/lib/libhtc_ril.so \
     ro.telephony.call_ring.delay=2 \
     ro.telephony.ril.v3=signalstrength,singlepdp \
@@ -116,6 +116,7 @@ PRODUCT_PACKAGES := \
     camera.qsd8k
 # Audio
 PRODUCT_PACKAGES += \
+    libaudioutils \
     audio.a2dp.default \
     audio.primary.qsd8k \
     audio_policy.qsd8k
@@ -204,7 +205,8 @@ PRODUCT_CODENAME := passion
 
 PRODUCT_PACKAGES += \
     Stk \
-    Camera
+    Camera \
+    Torch
 
 PRODUCT_RELEASE_NAME := N1
 PRODUCT_VERSION_DEVICE_SPECIFIC := -$(shell date +%m%d%Y)
