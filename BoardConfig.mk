@@ -96,6 +96,7 @@ COMMON_GLOBAL_CFLAGS    += -DREFRESH_RATE=60
 TARGET_USE_OVERLAY      := false
 TARGET_HAVE_BYPASS      := false
 TARGET_USES_C2D_COMPOSITION := false
+BOARD_ADRENO_DECIDE_TEXTURE_TARGET := true
 
 # Allow fallback to ashmem. Try to use ASHMEM if possible (when non-MDP composition is used)
 # if enabled, set debug.sf.hw=1 in system.prop
